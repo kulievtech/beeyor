@@ -91,12 +91,10 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           path: all-blob-reports
-          # pattern: blob-report-${{ env.TEST_SUITE }}-*
           pattern: blob-report-*
           merge-multiple: true
 
       - name: Merge into HTML Report
-        # run: npx playwright merge-reports --reporter html all-blob-reports/blob-report-${{ env.TEST_SUITE }}-*
         run: npx playwright merge-reports --reporter html all-blob-reports
 
       - name: Upload HTML report
