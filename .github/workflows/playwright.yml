@@ -20,9 +20,14 @@ on:
           - Smoke
           - Regression
           - All
+      test_name_filter:
+        description: "Optional: Filter tests by name (regex supported)"
+        required: false
+        default: ""
+        type: string
   schedule:
-    - cron: "0 5 * * 1-5" # 5:00 UTC
-    - cron: "0 17 * * 1-5" # 17:00 UTC
+    - cron: "0 5 * * 1-5" # 12:00 AM (midnight) EST
+    - cron: "0 17 * * 1-5" # 12:00 PM (noon) EST
   push:
     branches: [main, master]
   pull_request:
@@ -39,6 +44,7 @@ jobs:
       fail-fast: false
     env:
       TEST_SUITE: ${{ github.event.inputs.test_type }}
+      TEST_NAME_FILTER: ${{ github.event.inputs.test_name_filter }}
     steps:
       - uses: actions/checkout@v4
 
@@ -55,12 +61,23 @@ jobs:
       - name: Run Playwright tests
         run: |
           echo "Running $TEST_SUITE tests"
+          echo "Test name filter: $TEST_NAME_FILTER"
+
+          # Build grep argument dynamically
+          GREP_ARG=""
+          if [ -n "$TEST_NAME_FILTER" ]; then
+            GREP_ARG="--grep $TEST_NAME_FILTER"
+          fi
+
           if [ "$TEST_SUITE" = "Smoke" ]; then
-            npx playwright test --grep "@smoke" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
+            echo "Running Smoke suite..."
+            npx playwright test --grep "@smoke" $GREP_ARG --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
           elif [ "$TEST_SUITE" = "Regression" ]; then
-            npx playwright test --grep "@regression" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
+            echo "Running Regression suite..."
+            npx playwright test --grep "@regression" $GREP_ARG --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
           else
-            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
+            echo "Running All tests..."
+            npx playwright test $GREP_ARG --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
           fi
 
       - name: Upload blob report to GitHub Actions Artifacts
