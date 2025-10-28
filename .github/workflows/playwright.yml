@@ -35,6 +35,7 @@ jobs:
     strategy:
       matrix:
         shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
       fail-fast: false
     env:
       TEST_SUITE: ${{ github.event.inputs.test_type }}
@@ -55,18 +56,18 @@ jobs:
         run: |
           echo "Running $TEST_SUITE tests"
           if [ "$TEST_SUITE" = "Smoke" ]; then
-            npx playwright test --grep "@smoke" --shard=${{ matrix.shardIndex }}/4 --reporter=html,blob
+            npx playwright test --grep "@smoke" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
           elif [ "$TEST_SUITE" = "Regression" ]; then
-            npx playwright test --grep "@regression" --shard=${{ matrix.shardIndex }}/4 --reporter=html,blob
+            npx playwright test --grep "@regression" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
           else
-            npx playwright test --shard=${{ matrix.shardIndex }}/4 --reporter=html,blob
+            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
           fi
 
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: blob-report-${{ matrix.shardIndex }}
+          name: blob-report-${{ env.TEST_SUITE }}-${{ matrix.shardIndex }}
           path: playwright-report
           retention-days: 14
 
@@ -74,6 +75,8 @@ jobs:
     if: ${{ !cancelled() }}
     needs: [playwright-tests]
     runs-on: ubuntu-latest
+    env:
+      TEST_SUITE: ${{ github.event.inputs.test_type }}
     steps:
       - uses: actions/checkout@v4
 
@@ -88,7 +91,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           path: all-blob-reports
-          pattern: blob-report-*
+          pattern: blob-report-${{ env.TEST_SUITE }}-*
           merge-multiple: true
 
       - name: Merge into HTML Report
@@ -97,6 +100,6 @@ jobs:
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
-          name: html-report--attempt-${{ github.run_attempt }}
+          name: html-report-${{ env.TEST_SUITE }}-attempt-${{ github.run_attempt }}
           path: playwright-report
           retention-days: 14
