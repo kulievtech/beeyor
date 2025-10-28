@@ -91,7 +91,8 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           path: all-blob-reports
-          pattern: blob-report-${{ env.TEST_SUITE }}-*
+          # pattern: blob-report-${{ env.TEST_SUITE }}-*
+          pattern: blob-report-*
           merge-multiple: true
 
       - name: Merge into HTML Report
