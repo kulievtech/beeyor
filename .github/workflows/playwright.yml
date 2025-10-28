@@ -55,6 +55,7 @@ jobs:
       - name: Run Playwright tests
         run: |
           echo "Running $TEST_SUITE tests"
+          REPORT_DIR="playwright-report"
           if [ "$TEST_SUITE" = "Smoke" ]; then
             npx playwright test --grep "@smoke" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
           elif [ "$TEST_SUITE" = "Regression" ]; then
@@ -95,8 +96,11 @@ jobs:
           merge-multiple: true
 
       - name: Merge into HTML Report
-        # run: npx playwright merge-reports --reporter html all-blob-reports/blob-report-${{ env.TEST_SUITE }}-*
-        run: npx playwright merge-reports --reporter html all-blob-reports/blob-report-${{ env.TEST_SUITE }}-*/playwright-report
+        run: |
+          REPORT_DIRS=$(find all-blob-reports -type d -name "playwright-report")
+          echo "Merging the following report directories:"
+          echo "$REPORT_DIRS"
+          npx playwright merge-reports --reporter html $REPORT_DIRS
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
