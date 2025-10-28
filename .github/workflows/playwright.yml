@@ -38,8 +38,8 @@ jobs:
         shardTotal: [4]
     env:
       NODE_ENV: production
-      ENVIRONMENT: ${{ github.event.inputs.environment || 'staging' }}
-      TEST_TYPE: ${{ github.event.inputs.test_type || 'smoke' }}
+      ENVIRONMENT: ${{ github.event.inputs.environment || 'uat' }}
+      TEST_TYPE: ${{ github.event.inputs.test_type || 'all' }}
 
     steps:
       - uses: actions/checkout@v4
