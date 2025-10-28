@@ -56,11 +56,11 @@ jobs:
         run: |
           echo "Running $TEST_SUITE tests"
           if [ "$TEST_SUITE" = "Smoke" ]; then
-            npx playwright test --grep "@smoke" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob:playwright-report
+            npx playwright test --grep "@smoke" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
           elif [ "$TEST_SUITE" = "Regression" ]; then
-            npx playwright test --grep "@regression" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob:playwright-report
+            npx playwright test --grep "@regression" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
           else
-            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob:playwright-report
+            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
           fi
 
       - name: Upload blob report to GitHub Actions Artifacts
