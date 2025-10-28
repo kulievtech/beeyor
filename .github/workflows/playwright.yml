@@ -56,11 +56,11 @@ jobs:
         run: |
           echo "Running $TEST_SUITE tests"
           if [ "$TEST_SUITE" = "Smoke" ]; then
-            npx playwright test --grep "@smoke" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
+            npx playwright test --grep "@smoke" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob:playwright-report
           elif [ "$TEST_SUITE" = "Regression" ]; then
-            npx playwright test --grep "@regression" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
+            npx playwright test --grep "@regression" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob:playwright-report
           else
-            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
+            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob:playwright-report
           fi
 
       - name: Upload blob report to GitHub Actions Artifacts
@@ -95,7 +95,7 @@ jobs:
           merge-multiple: true
 
       - name: Merge into HTML Report
-        run: npx playwright merge-reports --reporter html ./all-blob-reports
+        run: npx playwright merge-reports --reporter html all-blob-reports/blob-report-${{ env.TEST_SUITE }}-*
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
