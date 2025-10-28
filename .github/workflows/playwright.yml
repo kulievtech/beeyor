@@ -4,22 +4,22 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Target environment to run tests against"
+        description: "Choose Environment to Run Tests Against"
         required: true
         default: "staging"
         type: choice
         options:
-          - staging
-          - uat
+          - UAT
+          - Staging
       test_type:
-        description: "Type of tests to run"
+        description: "Choose Test Suite to Run"
         required: true
-        default: "all"
+        default: "All"
         type: choice
         options:
-          - smoke
-          - regression
-          - all
+          - Smoke
+          - Regression
+          - All
   schedule:
     - cron: "0 5 * * 1-5" # 12:00 AM EST (UTC+5)
     - cron: "0 17 * * 1-5" # 12:00 PM EST (UTC+5)
@@ -38,8 +38,8 @@ jobs:
         shardTotal: [4]
     env:
       NODE_ENV: production
-      ENVIRONMENT: ${{ github.event.inputs.environment || 'uat' }}
-      TEST_TYPE: ${{ github.event.inputs.test_type || 'all' }}
+      ENVIRONMENT: ${{ github.event.inputs.environment || 'UAT' }}
+      TEST_TYPE: ${{ github.event.inputs.test_type || 'All' }}
 
     steps:
       - uses: actions/checkout@v4
