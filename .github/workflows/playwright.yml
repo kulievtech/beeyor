@@ -10,8 +10,7 @@ on:
         type: choice
         options:
           - staging
-          - production
-          - dev
+          - uat
       test_type:
         description: "Type of tests to run"
         required: true
