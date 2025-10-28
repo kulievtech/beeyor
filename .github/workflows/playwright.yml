@@ -68,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: blob-report-${{ env.TEST_SUITE }}-${{ matrix.shardIndex }}
-          path: playwright-report
+          path: blob-report
           retention-days: 14
 
   merge-reports:
@@ -97,7 +97,7 @@ jobs:
 
       - name: Merge into HTML Report
         # run: npx playwright merge-reports --reporter html all-blob-reports/blob-report-${{ env.TEST_SUITE }}-*
-        run: npx playwright merge-reports --reporter html ./all-blob-reports
+        run: npx playwright merge-reports --reporter html all-blob-reports
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
