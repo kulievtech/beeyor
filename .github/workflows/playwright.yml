@@ -28,10 +28,6 @@ on:
   schedule:
     - cron: "0 5 * * 1-5" # 12:00 AM (midnight) EST
     - cron: "0 17 * * 1-5" # 12:00 PM (noon) EST
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
 
 jobs:
   playwright-tests:
