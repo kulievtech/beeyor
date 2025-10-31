@@ -21,4 +21,8 @@ export default class ShopPage extends BasePage {
       this.page.locator("//div[contains(@class, 'cart')][@role='dialog']")
     );
   }
+
+  async getTrendingTitle(): Promise<string> {
+    return this.getText("//p[contains(., 'Trending Now')]");
+  }
 }

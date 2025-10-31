@@ -1,4 +1,4 @@
-import { test as base } from "@playwright/test";
+import { test as base, Page } from "@playwright/test";
 import MyAccountPage from "@pages/my-account/MyAccountPage";
 import { login } from "helpers/login";
 
@@ -7,14 +7,14 @@ import { login } from "helpers/login";
  */
 
 type AuthFixtures = {
-  myAccountPage: MyAccountPage;
+  page: Page;
   user: { username: string; password: string };
 };
 
 export const test = base.extend<AuthFixtures>({
-  myAccountPage: async ({ page }, use) => {
-    const myAccountPage = await login(page);
-    await use(myAccountPage);
+  page: async ({ page }, use) => {
+    await login(page);
+    await use(page);
   },
 
   // Fixed user fixture
