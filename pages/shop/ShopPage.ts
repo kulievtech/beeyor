@@ -14,9 +14,7 @@ export default class ShopPage extends BasePage {
 
   async openCart(): Promise<CartComponent> {
     await this.page.click("//button[contains(@aria-label, 'items in cart')]");
-    await this.waitForElement(
-      "//div[contains(@class, 'cart')][@role='dialog']"
-    );
+    await this.waitForElement("//div[contains(@class, 'cart')][@role='dialog']");
 
     return new CartComponent(
       this.page.locator("//div[contains(@class, 'cart')][@role='dialog']")

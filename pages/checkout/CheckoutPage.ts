@@ -7,8 +7,6 @@ import BasePage from "@pages/BasePage";
 
 export default class CheckoutPage extends BasePage {
   async waitUntilPageIsLoaded() {
-    await this.waitForElement(
-      "//p[@role='heading'][contains(., 'Order summary')]"
-    );
+    await this.waitForElement("//p[@role='heading'][contains(., 'Order summary')]");
   }
 }
