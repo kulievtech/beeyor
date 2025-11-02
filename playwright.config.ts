@@ -15,7 +15,7 @@ export default defineConfig({
   /* Global timeout for each test */
   timeout: 180_000,
   use: {
-    actionTimeout: 45_000,
+    actionTimeout: 20_000,
     trace: "off",
     viewport: { width: 1920, height: 1080 },
   },

@@ -1,5 +1,6 @@
 import BasePage from "@pages/BasePage";
 import CartComponent from "@pages/CartComponent";
+import { ProductsTable } from "./ProductsTable";
 
 /**
  * Dashboard Page page object
@@ -24,5 +25,21 @@ export default class ShopPage extends BasePage {
 
   async getTrendingTitle(): Promise<string> {
     return this.getText("//p[contains(., 'Trending Now')]");
+  }
+
+  getTrendingProductsTable() {
+    return new ProductsTable(
+      this.page.locator(
+        "//div[contains(@class, 'group')][contains(@class, 'has-background')][div[contains(., 'Trending Products')]]"
+      )
+    );
+  }
+
+  getNewArrivalsProductsTable() {
+    return new ProductsTable(
+      this.page.locator(
+        "//div[contains(@class, 'group')][contains(@class, 'has-background')][div[contains(., 'New Arrivals')]]"
+      )
+    );
   }
 }

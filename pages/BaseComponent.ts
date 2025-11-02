@@ -27,12 +27,18 @@ export default class BaseComponent {
     await this.element.locator(selector).click();
   }
 
+  async hover(selector: string) {
+    await this.element.locator(selector).hover();
+  }
+
   async fill(selector: string, value: string) {
     await this.element.locator(selector).fill(value);
   }
 
-  async getText(selector: string): Promise<string | null> {
-    return await this.element.locator(selector).textContent();
+  async getText(selector: string, timeout = 5000): Promise<string> {
+    const locator = this.element.locator(selector);
+    await locator.waitFor({ state: "visible", timeout });
+    return await locator.innerText();
   }
 
   async isVisible(selector: string): Promise<boolean> {
