@@ -32,3 +32,28 @@ test.describe("Products Present on Shop Page", { tag: ["@smoke"] }, () => {
     expect(products.length).toBeGreaterThan(0);
   });
 });
+
+const tables = ["Trending Products", "New Arrivals"];
+
+// tables.forEach((tableName) => {
+//   test.describe(`${tableName} Products Present`, { tag: ["@smoke"] }, () => {
+//     test(`${tableName} table is displayed`, async ({ page }) => {
+//       // 1. Go to Shop Page
+//       const shopPage = await goToShopPage(page);
+
+//       // 2. Wait until page is loaded
+//       await shopPage.waitUntilPageIsLoaded();
+
+//       // 3. Get Products table and current products
+//       const productsTable =
+//         tableName === "Trending Products"
+//           ? shopPage.getTrendingProductsTable()
+//           : shopPage.getNewArrivalsProductsTable();
+
+//       const products = await productsTable.getCurrentProducts();
+
+//       // 4. Verify that there is at least one product displayed
+//       expect(products.length).toBeGreaterThan(0);
+//     });
+//   });
+// });
