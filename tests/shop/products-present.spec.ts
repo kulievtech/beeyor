@@ -33,11 +33,11 @@ test.describe("Products Present on Shop Page", { tag: ["@smoke"] }, () => {
   });
 });
 
-const tables = ["Trending Products", "New Arrivals"];
+// const tables = ["Trending", "New Arrivals"];
 
 // tables.forEach((tableName) => {
-//   test.describe(`${tableName} Products Present`, { tag: ["@smoke"] }, () => {
-//     test(`${tableName} table is displayed`, async ({ page }) => {
+//   test.describe(`${tableName} Products Present on Shop Page`, { tag: ["@smoke"] }, () => {
+//     test(`${tableName} Products is displayed`, async ({ page }) => {
 //       // 1. Go to Shop Page
 //       const shopPage = await goToShopPage(page);
 
@@ -46,7 +46,7 @@ const tables = ["Trending Products", "New Arrivals"];
 
 //       // 3. Get Products table and current products
 //       const productsTable =
-//         tableName === "Trending Products"
+//         tableName === "Trending"
 //           ? shopPage.getTrendingProductsTable()
 //           : shopPage.getNewArrivalsProductsTable();
 

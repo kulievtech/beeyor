@@ -49,10 +49,10 @@ test.describe("Products Present on Shop Page", { tag: ["@smoke"] }, () => {
   });
 });
 
-// const tables = ["Trending Products", "New Arrivals"];
+// const tables = ["Trending", "New Arrivals"];
 
 // tables.forEach((tableName) => {
-//   test.describe(`${tableName} Product Titles and Prices`, { tag: ["@smoke"] }, () => {
+//   test.describe(`${tableName} Products Titles and Prices`, { tag: ["@smoke"] }, () => {
 //     test(`${tableName} products have valid titles and prices`, async ({ page }) => {
 //       // 1. Go to Shop Page
 //       const shopPage = await goToShopPage(page);
