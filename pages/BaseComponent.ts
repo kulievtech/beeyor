@@ -45,7 +45,7 @@ export default class BaseComponent {
     return await this.element.locator(selector).isVisible();
   }
 
-  async waitForElement(selector: string, timeout = 5000) {
+  async waitForElement(selector: string, timeout = 10000): Promise<void> {
     await this.element.locator(selector).waitFor({ state: "visible", timeout });
   }
 }
