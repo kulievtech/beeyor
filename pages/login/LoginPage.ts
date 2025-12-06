@@ -2,7 +2,7 @@ import BasePage from "@pages/BasePage";
 import MyAccountPage from "@pages/my-account/MyAccountPage";
 
 /**
- * Login Page page object
+ * Login Page - page object
  * URL: /login
  */
 

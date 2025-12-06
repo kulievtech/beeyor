@@ -1,7 +1,7 @@
 import BasePage from "@pages/BasePage";
 
 /**
- * Checkout Page page object
+ * Checkout Page - page object
  * URL: /checkout
  */
 

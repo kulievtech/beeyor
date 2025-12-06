@@ -2,7 +2,7 @@ import BaseComponent from "@pages/BaseComponent";
 import BasePage from "@pages/BasePage";
 
 /**
- * Cart Page page object
+ * Cart Page - page object
  * URL: /cart
  */
 

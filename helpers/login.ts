@@ -1,8 +1,7 @@
 import { Page } from "@playwright/test";
+import { goToLoginPage, goToStartPage } from "actions/navigation";
 
 export async function login(page: Page) {
-  const { goToLoginPage, goToStartPage } = await import("actions/navigation");
-
   // 1. Go to the start page
   await goToStartPage(page);
 
