@@ -2,7 +2,7 @@ import test, { expect } from "@playwright/test";
 import { goToLoginPage, goToStartPage } from "actions/navigation";
 
 test(
-  "Plain - Verify a user can login",
+  "Plain Login - Verify a user can login",
   { tag: ["@smoke", "@regression"] },
   async ({ page }) => {
     // 1. Go to the start page
