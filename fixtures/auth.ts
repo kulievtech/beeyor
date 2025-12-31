@@ -1,5 +1,4 @@
 import { test as base, Page } from "@playwright/test";
-import MyAccountPage from "@pages/my-account/MyAccountPage";
 import { login } from "helpers/login";
 
 /**
@@ -14,12 +13,16 @@ type AuthFixtures = {
 export const test = base.extend<AuthFixtures>({
   page: async ({ page }, use) => {
     await login(page);
+
+    // Provide the logged-in page to the test
     await use(page);
   },
 
   // Fixed user fixture
   user: async ({}, use) => {
     const userData = { username: "students", password: "Default1!" };
-    await use(userData); // This makes `user` available in your tests
+
+    // This makes `user` available in your tests
+    await use(userData);
   },
 });
