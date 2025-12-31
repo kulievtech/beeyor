@@ -1,5 +1,5 @@
 import test, { expect } from "@playwright/test";
-import { login } from "helpers/login";
+import { login } from "utilities/login";
 
 test("Helper Login - Verify a user can login", { tag: ["@smoke"] }, async ({ page }) => {
   const accountPage = await login(page);

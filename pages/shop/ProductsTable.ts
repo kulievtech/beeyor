@@ -1,6 +1,6 @@
 import BaseComponent from "@pages/BaseComponent";
 import CartPage from "@pages/cart/CartPage";
-import parseNumeric from "helpers/parseNumeric";
+import parseNumeric from "utilities/parseNumeric";
 
 export class ProductsTable extends BaseComponent {
   async getCurrentProducts(): Promise<Product[]> {

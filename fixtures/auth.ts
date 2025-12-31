@@ -1,5 +1,5 @@
 import { test as base, Page } from "@playwright/test";
-import { login } from "helpers/login";
+import { login } from "utilities/login";
 
 /**
  * Define a custom fixture that logs in before each test.
