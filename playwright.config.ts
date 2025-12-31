@@ -25,6 +25,8 @@ export default defineConfig({
   /* The use object is a central place for defining options that configure 
   the browser, browser context, and general testing environment for all tests or for specific test projects */
   use: {
+    /* Determines whether the browser runs with or without a visible graphical user interface (GUI). */
+    headless: true,
     /* Sets the maximum time (in milliseconds) that Playwright will wait for a specific user action (like click(), fill(), check(), etc.) to complete. */
     actionTimeout: 20_000,
     /* Enables the recording of a detailed trace file (trace.zip) for your test execution. */
@@ -33,6 +35,10 @@ export default defineConfig({
     /* Sets the default viewport size for all tests */
     /* This is useful for ensuring consistent test results across different screen sizes and resolutions */
     viewport: { width: 1920, height: 1080 },
+    /* Used to control the recording of test execution videos for debugging and reporting purposes. By default, video recording is turned off. */
+    video: "retain-on-failure",
+    /* Controls the recording of screenshots for debugging and reporting purposes. By default, screenshot recording is turned off. */
+    screenshot: "only-on-failure",
   },
 
   /* Configure projects for major browsers */

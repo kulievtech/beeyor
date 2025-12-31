@@ -23,9 +23,8 @@ test.describe("Products Present on Shop Page", { tag: ["@smoke"] }, () => {
     for (const product of products) {
       const title = await product.getTitle();
       const price = await product.getPrice();
-      if (price === null) continue;
-
-      console.log({ title, price });
+      // If product does not have a price, it returns 0
+      if (price === 0) continue;
 
       expect.soft(title.length).toBeGreaterThan(3);
       expect.soft(price).toBeGreaterThan(0);
@@ -41,7 +40,8 @@ test.describe("Products Present on Shop Page", { tag: ["@smoke"] }, () => {
     for (const product of products) {
       const title = await product.getTitle();
       const price = await product.getPrice();
-      if (price === null) continue;
+      // If product does not have a price, it returns 0
+      if (price === 0) continue;
 
       expect.soft(title.length).toBeGreaterThan(3);
       expect.soft(price).toBeGreaterThan(0);
