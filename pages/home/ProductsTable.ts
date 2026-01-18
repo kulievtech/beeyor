@@ -4,7 +4,9 @@ import parseNumeric from "utilities/parseNumeric";
 
 export class ProductsTable extends BaseComponent {
   async getCurrentProducts(): Promise<Product[]> {
-    const products = this.element.locator("//ul[contains(@class, 'products')]/li");
+    const products = this.element.locator(
+      "//ul[contains(@class, 'products')]/li",
+    );
     await products.first().waitFor({ state: "visible" });
     return (await products.all()).map((product) => new Product(product));
   }
@@ -22,7 +24,9 @@ export class Product extends BaseComponent {
 
   async getPrice(): Promise<number> {
     try {
-      const numText = await this.getText("//span[contains(@class, 'Price-amount')]");
+      const numText = await this.getText(
+        "//span[contains(@class, 'Price-amount')]",
+      );
       return parseNumeric(numText);
     } catch (error) {
       console.error("Failed to get price:", error);
@@ -41,7 +45,9 @@ export class Product extends BaseComponent {
   }
 
   async isAddedToCart(): Promise<boolean> {
-    const button = this.element.locator("//a[contains(@aria-label, 'Add to cart')]");
+    const button = this.element.locator(
+      "//a[contains(@aria-label, 'Add to cart')]",
+    );
     await this.waitForElement("//a[@title='View cart']");
     const classAttr = await button.getAttribute("class");
     return classAttr?.includes("added") ?? false;

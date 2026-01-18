@@ -1,4 +1,4 @@
-import ShopPage from "@pages/shop/ShopPage";
+import ShopPage from "@pages/home/ShopPage";
 import { expect } from "@playwright/test";
 import { goToShopPage } from "actions/navigation";
 import { test } from "fixtures/auth";

@@ -12,7 +12,9 @@ export default class CartPage extends BasePage {
   }
 
   getCartItemsTable(): CartItemsTable {
-    const tableLocator = this.page.locator("//table[contains(@class, 'cart-items')]");
+    const tableLocator = this.page.locator(
+      "//table[contains(@class, 'cart-items')]",
+    );
     return new CartItemsTable(tableLocator);
   }
 }

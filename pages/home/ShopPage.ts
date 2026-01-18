@@ -14,10 +14,12 @@ export default class ShopPage extends BasePage {
 
   async openCart(): Promise<CartComponent> {
     await this.page.click("//button[contains(@aria-label, 'items in cart')]");
-    await this.waitForElement("//div[contains(@class, 'cart')][@role='dialog']");
+    await this.waitForElement(
+      "//div[contains(@class, 'cart')][@role='dialog']",
+    );
 
     return new CartComponent(
-      this.page.locator("//div[contains(@class, 'cart')][@role='dialog']")
+      this.page.locator("//div[contains(@class, 'cart')][@role='dialog']"),
     );
   }
 
@@ -28,16 +30,16 @@ export default class ShopPage extends BasePage {
   getTrendingProductsTable() {
     return new ProductsTable(
       this.page.locator(
-        "//div[contains(@class, 'group')][contains(@class, 'has-background')][div[contains(., 'Trending Products')]]"
-      )
+        "//div[contains(@class, 'group')][contains(@class, 'has-background')][div[contains(., 'Trending Products')]]",
+      ),
     );
   }
 
   getNewArrivalsProductsTable() {
     return new ProductsTable(
       this.page.locator(
-        "//div[contains(@class, 'group')][contains(@class, 'has-background')][div[contains(., 'New Arrivals')]]"
-      )
+        "//div[contains(@class, 'group')][contains(@class, 'has-background')][div[contains(., 'New Arrivals')]]",
+      ),
     );
   }
 }

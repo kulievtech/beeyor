@@ -2,7 +2,7 @@ import CartPage from "@pages/cart/CartPage";
 import CheckoutPage from "@pages/checkout/CheckoutPage";
 import LoginPage from "@pages/login/LoginPage";
 import MyAccountPage from "@pages/my-account/MyAccountPage";
-import ShopPage from "@pages/shop/ShopPage";
+import ShopPage from "@pages/home/ShopPage";
 import { Page } from "@playwright/test";
 import { BASE_URL } from "models/Arguments";
 
@@ -17,13 +17,17 @@ const goToCartPage = async (page: Page): Promise<CartPage> => {
 };
 
 const goToCheckoutPage = async (page: Page): Promise<CheckoutPage> => {
-  await page.click("//div[@id='modal-2-content']//span[contains(., 'Checkout')]");
+  await page.click(
+    "//div[@id='modal-2-content']//span[contains(., 'Checkout')]",
+  );
 
   return new CheckoutPage(page);
 };
 
 const goToMyAccountPage = async (page: Page): Promise<MyAccountPage> => {
-  await page.click("//div[@id='modal-2-content']//span[contains(., 'My Account')]");
+  await page.click(
+    "//div[@id='modal-2-content']//span[contains(., 'My Account')]",
+  );
 
   return new MyAccountPage(page);
 };
