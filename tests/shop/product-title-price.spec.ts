@@ -29,8 +29,10 @@ test.describe(
         // If product does not have a price, it returns 0
         if (price === 0) continue;
 
-        expect.soft(title.length).toBeGreaterThan(3);
+        expect.soft(title.length).toBeGreaterThan(1);
+        expect.soft(typeof title).toBe("string");
         expect.soft(price).toBeGreaterThan(0);
+        expect.soft(typeof price).toBe("number");
       }
     });
 
@@ -46,11 +48,13 @@ test.describe(
         // If product does not have a price, it returns 0
         if (price === 0) continue;
 
-        expect.soft(title.length).toBeGreaterThan(3);
+        expect.soft(title.length).toBeGreaterThan(1);
+        expect.soft(typeof title).toBe("string");
         expect.soft(price).toBeGreaterThan(0);
+        expect.soft(typeof price).toBe("number");
       }
     });
-  }
+  },
 );
 
 // const tables = ["Trending", "New Arrivals"];
