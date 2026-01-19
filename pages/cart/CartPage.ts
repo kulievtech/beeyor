@@ -1,5 +1,6 @@
 import BaseComponent from "@pages/BaseComponent";
 import BasePage from "@pages/BasePage";
+import parseNumeric from "utilities/parseNumeric";
 
 /**
  * Cart Page - page object
@@ -16,6 +17,20 @@ export default class CartPage extends BasePage {
       "//table[contains(@class, 'cart-items')]",
     );
     return new CartItemsTable(tableLocator);
+  }
+
+  async getSubtotal(): Promise<number> {
+    const priceText = await this.getText(
+      "//div[contains(@class, 'cart__sidebar')]//div[contains(@class, 'totals-item')][contains(., 'Subtotal')]//span[contains(@class, 'formatted-money-amount')]",
+    );
+    return parseNumeric(priceText);
+  }
+
+  async getTotal(): Promise<number> {
+    const priceText = await this.getText(
+      "//div[contains(@class, 'cart__sidebar')]//div[contains(@class, 'totals-item')][contains(., 'Total')]//span[contains(@class, 'formatted-money-amount')]",
+    );
+    return parseNumeric(priceText);
   }
 }
 
@@ -38,7 +53,7 @@ class CartItem extends BaseComponent {
 
   async getPrice(): Promise<number> {
     const priceText = await this.getText(".product-price .amount");
-    return parseFloat(priceText.replace(/[^0-9.-]+/g, ""));
+    return parseNumeric(priceText);
   }
 
   async getDescription(): Promise<string> {
