@@ -16,6 +16,7 @@ export default class CartPage extends BasePage {
     const tableLocator = this.page.locator(
       "//table[contains(@class, 'cart-items')]",
     );
+
     return new CartItemsTable(tableLocator);
   }
 
@@ -32,12 +33,30 @@ export default class CartPage extends BasePage {
     );
     return parseNumeric(priceText);
   }
+
+  async clickApplePay(): Promise<void> {
+    const frame = this.page.frameLocator(
+      "//li[contains(@id, 'applePay')]//iframe",
+    );
+
+    await frame.locator("#apple-pay-button").click();
+  }
+
+  async clickLinkPay(): Promise<void> {
+    const frame = this.page.frameLocator("//li[contains(@id, 'link')]//iframe");
+    await frame.locator("#primary").click();
+  }
+
+  async clickCheckout(): Promise<void> {
+    await this.click("//div[contains(@class, 'cart__submit')]//a");
+  }
 }
 
 class CartItemsTable extends BaseComponent {
   async getCartItems(): Promise<CartItem[]> {
     const items = this.element.locator("//tr[contains(@class, 'row')]");
     await items.first().waitFor({ state: "visible" });
+
     return (await items.all()).map((item) => new CartItem(item));
   }
 }
@@ -79,6 +98,6 @@ class CartItem extends BaseComponent {
 
   async getTotal(): Promise<number> {
     const totalText = await this.getText(".product-subtotal .amount");
-    return parseFloat(totalText.replace(/[^0-9.-]+/g, ""));
+    return parseNumeric(totalText);
   }
 }
