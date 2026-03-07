@@ -1,22 +1,22 @@
-import ShopPage from "@pages/home/HomePage";
+import HomePage from "@pages/home/HomePage";
 import { expect } from "@playwright/test";
-import { goToShopPage } from "actions/navigation";
+import { goToHomePage } from "actions/navigation";
 import { test } from "fixtures/auth";
 
 test.describe("Products Present on Shop Page", { tag: ["@smoke"] }, () => {
-  let shopPage: ShopPage;
+  let homePage: HomePage;
 
   test.beforeEach(async ({ page }) => {
     // 1. Go to Shop Page
-    shopPage = await goToShopPage(page);
+    homePage = await goToHomePage(page);
 
     // 2. Wait until page is loaded
-    await shopPage.waitUntilPageIsLoaded();
+    await homePage.waitUntilPageIsLoaded();
   });
 
   test("Trending Products table is displayed", async () => {
     // 3. Get Trending Products table and current products
-    const productsTable = shopPage.getTrendingProductsTable();
+    const productsTable = homePage.getTrendingProductsTable();
     const products = await productsTable.getCurrentProducts();
 
     // 4. Verify that there is at least one product displayed
@@ -25,7 +25,7 @@ test.describe("Products Present on Shop Page", { tag: ["@smoke"] }, () => {
 
   test("New Arrivals Products table is displayed", async () => {
     // 3. Get New Arrivals Products table and current products
-    const productsTable = shopPage.getNewArrivalsProductsTable();
+    const productsTable = homePage.getNewArrivalsProductsTable();
     const products = await productsTable.getCurrentProducts();
 
     // 4. Verify that there is at least one product displayed
@@ -33,27 +33,31 @@ test.describe("Products Present on Shop Page", { tag: ["@smoke"] }, () => {
   });
 });
 
-// const tables = ["Trending", "New Arrivals"];
+const tables = ["Trending", "New Arrivals"];
 
-// tables.forEach((tableName) => {
-//   test.describe(`${tableName} Products Present on Shop Page`, { tag: ["@smoke"] }, () => {
-//     test(`${tableName} Products is displayed`, async ({ page }) => {
-//       // 1. Go to Shop Page
-//       const shopPage = await goToShopPage(page);
+tables.forEach((tableName) => {
+  test.describe(
+    `${tableName} Products Present on Shop Page`,
+    { tag: ["@smoke"] },
+    () => {
+      test(`${tableName} Products is displayed`, async ({ page }) => {
+        // 1. Go to Shop Page
+        const homePage = await goToHomePage(page);
 
-//       // 2. Wait until page is loaded
-//       await shopPage.waitUntilPageIsLoaded();
+        // 2. Wait until page is loaded
+        await homePage.waitUntilPageIsLoaded();
 
-//       // 3. Get Products table and current products
-//       const productsTable =
-//         tableName === "Trending"
-//           ? shopPage.getTrendingProductsTable()
-//           : shopPage.getNewArrivalsProductsTable();
+        // 3. Get Products table and current products
+        const productsTable =
+          tableName === "Trending"
+            ? homePage.getTrendingProductsTable()
+            : homePage.getNewArrivalsProductsTable();
 
-//       const products = await productsTable.getCurrentProducts();
+        const products = await productsTable.getCurrentProducts();
 
-//       // 4. Verify that there is at least one product displayed
-//       expect(products.length).toBeGreaterThan(0);
-//     });
-//   });
-// });
+        // 4. Verify that there is at least one product displayed
+        expect(products.length).toBeGreaterThan(0);
+      });
+    },
+  );
+});

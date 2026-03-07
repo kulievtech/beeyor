@@ -1,25 +1,25 @@
-import ShopPage from "@pages/home/HomePage";
+import HomePage from "@pages/home/HomePage";
 import { expect } from "@playwright/test";
-import { goToShopPage } from "actions/navigation";
+import { goToHomePage } from "actions/navigation";
 import { test } from "fixtures/auth";
 
 test.describe(
   "Products Title and Price Present on the Shop Page",
   { tag: ["@smoke"] },
   () => {
-    let shopPage: ShopPage;
+    let homePage: HomePage;
 
     test.beforeEach(async ({ page }) => {
       // 1. Go to Shop Page
-      shopPage = await goToShopPage(page);
+      homePage = await goToHomePage(page);
 
       // 2. Wait until page is loaded
-      await shopPage.waitUntilPageIsLoaded();
+      await homePage.waitUntilPageIsLoaded();
     });
 
     test("Trending Products have valid titles and prices", async () => {
       // 3. Get Trending Products table and current products
-      const productsTable = shopPage.getTrendingProductsTable();
+      const productsTable = homePage.getTrendingProductsTable();
       const products = await productsTable.getCurrentProducts();
 
       // 4. Verify that each product has a valid title and price
@@ -38,7 +38,7 @@ test.describe(
 
     test("New Arrivals Products have valid titles and prices", async () => {
       // 3. Get New Arrivals Products table and current products
-      const productsTable = shopPage.getNewArrivalsProductsTable();
+      const productsTable = homePage.getNewArrivalsProductsTable();
       const products = await productsTable.getCurrentProducts();
 
       // 4. Verify that each product has a valid title and price
@@ -57,34 +57,40 @@ test.describe(
   },
 );
 
-// const tables = ["Trending", "New Arrivals"];
+const tables = ["Trending", "New Arrivals"];
 
-// tables.forEach((tableName) => {
-//   test.describe(`${tableName} Products Titles and Prices`, { tag: ["@smoke"] }, () => {
-//     test(`${tableName} products have valid titles and prices`, async ({ page }) => {
-//       // 1. Go to Shop Page
-//       const shopPage = await goToShopPage(page);
+tables.forEach((tableName) => {
+  test.describe(
+    `${tableName} Products Titles and Prices`,
+    { tag: ["@smoke"] },
+    () => {
+      test(`${tableName} products have valid titles and prices`, async ({
+        page,
+      }) => {
+        // 1. Go to Shop Page
+        const homePage = await goToHomePage(page);
 
-//       // 2. Wait until page is loaded
-//       await shopPage.waitUntilPageIsLoaded();
+        // 2. Wait until page is loaded
+        await homePage.waitUntilPageIsLoaded();
 
-//       // 3. Get Products table and current products
-//       const productsTable =
-//         tableName === "Trending Products"
-//           ? shopPage.getTrendingProductsTable()
-//           : shopPage.getNewArrivalsProductsTable();
+        // 3. Get Products table and current products
+        const productsTable =
+          tableName === "Trending Products"
+            ? homePage.getTrendingProductsTable()
+            : homePage.getNewArrivalsProductsTable();
 
-//       const products = await productsTable.getCurrentProducts();
+        const products = await productsTable.getCurrentProducts();
 
-//       // 4. Verify that each product has a valid title and price
-//       for (const product of products) {
-//         const title = await product.getTitle();
-//         const price = await product.getPrice();
-//         if (price === null) continue;
+        // 4. Verify that each product has a valid title and price
+        for (const product of products) {
+          const title = await product.getTitle();
+          const price = await product.getPrice();
+          if (price === null) continue;
 
-//         expect.soft(title.length).toBeGreaterThan(3);
-//         expect.soft(price).toBeGreaterThan(0);
-//       }
-//     });
-//   });
-// });
+          expect.soft(title.length).toBeGreaterThan(3);
+          expect.soft(price).toBeGreaterThan(0);
+        }
+      });
+    },
+  );
+});

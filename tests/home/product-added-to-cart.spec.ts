@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { goToShopPage } from "actions/navigation";
+import { goToHomePage } from "actions/navigation";
 import { test } from "fixtures/auth";
 
 test.describe("Add Product to a Cart", { tag: ["@smoke"] }, () => {
@@ -7,11 +7,11 @@ test.describe("Add Product to a Cart", { tag: ["@smoke"] }, () => {
     page,
   }) => {
     // 1. Navigate to the shop page
-    const shopPage = await goToShopPage(page);
-    await shopPage.waitUntilPageIsLoaded();
+    const homePage = await goToHomePage(page);
+    await homePage.waitUntilPageIsLoaded();
 
     // 2. Get the trending products table
-    const productsTable = shopPage.getTrendingProductsTable();
+    const productsTable = homePage.getTrendingProductsTable();
 
     // 3. Get the list of current products in the trending products table
     const products = await productsTable.getCurrentProducts();

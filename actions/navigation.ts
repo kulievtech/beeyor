@@ -2,7 +2,7 @@ import CartPage from "@pages/cart/CartPage";
 import CheckoutPage from "@pages/checkout/CheckoutPage";
 import LoginPage from "@pages/login/LoginPage";
 import MyAccountPage from "@pages/my-account/MyAccountPage";
-import ShopPage from "@pages/home/HomePage";
+import HomePage from "@pages/home/HomePage";
 import { Page } from "@playwright/test";
 import { BASE_URL } from "models/Arguments";
 
@@ -32,10 +32,10 @@ const goToMyAccountPage = async (page: Page): Promise<MyAccountPage> => {
   return new MyAccountPage(page);
 };
 
-const goToShopPage = async (page: Page): Promise<ShopPage> => {
+const goToHomePage = async (page: Page): Promise<HomePage> => {
   await page.click("//div[@id='modal-2-content']//span[contains(., 'Shop')]");
 
-  return new ShopPage(page);
+  return new HomePage(page);
 };
 
 const goToLoginPage = async (page: Page): Promise<LoginPage> => {
@@ -49,6 +49,6 @@ export {
   goToCartPage,
   goToCheckoutPage,
   goToMyAccountPage,
-  goToShopPage,
+  goToHomePage,
   goToLoginPage,
 };

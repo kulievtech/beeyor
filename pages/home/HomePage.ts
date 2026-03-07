@@ -7,7 +7,7 @@ import { ProductsTable } from "./ProductsTable";
  * URL: /dashboard
  */
 
-export default class ShopPage extends BasePage {
+export default class HomePage extends BasePage {
   async waitUntilPageIsLoaded() {
     await this.waitForElement("//h2[contains(., 'Trending Products')]");
   }
