@@ -25,36 +25,24 @@ export default class BasePage {
   }
 
   async click(selector: string) {
-    const locator = this.page.locator(selector);
-    await locator.waitFor({ state: "visible" });
-    await locator.scrollIntoViewIfNeeded();
-    await locator.click();
+    await this.page.locator(selector).click();
   }
 
   async fill(selector: string, value: string) {
-    const locator = this.page.locator(selector);
-    await locator.waitFor({ state: "visible" });
-    await locator.scrollIntoViewIfNeeded();
-    await locator.fill(value);
+    await this.page.locator(selector).fill(value);
   }
 
   async getText(selector: string): Promise<string> {
     const locator = this.page.locator(selector);
-    await locator.waitFor({ state: "visible" });
-    await locator.scrollIntoViewIfNeeded();
-    return (await locator.innerText()).trim();
+    const text = (await locator.innerText()).trim();
+    return text;
   }
 
   async isVisible(selector: string): Promise<boolean> {
-    const locator = this.page.locator(selector);
-    await locator.waitFor({ state: "visible" });
-    await locator.scrollIntoViewIfNeeded();
-    return await locator.isVisible();
+    return this.page.locator(selector).isVisible();
   }
 
   async waitForElement(selector: string): Promise<void> {
-    const locator = this.page.locator(selector);
-    await locator.waitFor({ state: "visible" });
-    await locator.scrollIntoViewIfNeeded();
+    await this.page.locator(selector).waitFor({ state: "visible" });
   }
 }

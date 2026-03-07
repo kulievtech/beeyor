@@ -35,10 +35,10 @@ export default class BaseComponent {
     await this.element.locator(selector).fill(value);
   }
 
-  async getText(selector: string, timeout = 5000): Promise<string> {
-    const locator = this.element.locator(selector);
-    await locator.waitFor({ state: "visible", timeout });
-    return await locator.innerText();
+  async getText(selector: string): Promise<string> {
+    const locator = this.page.locator(selector);
+    const text = (await locator.innerText()).trim();
+    return text;
   }
 
   async isVisible(selector: string): Promise<boolean> {
