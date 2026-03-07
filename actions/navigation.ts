@@ -2,7 +2,7 @@ import CartPage from "@pages/cart/CartPage";
 import CheckoutPage from "@pages/checkout/CheckoutPage";
 import LoginPage from "@pages/login/LoginPage";
 import MyAccountPage from "@pages/my-account/MyAccountPage";
-import ShopPage from "@pages/home/ShopPage";
+import ShopPage from "@pages/home/HomePage";
 import { Page } from "@playwright/test";
 import { BASE_URL } from "models/Arguments";
 

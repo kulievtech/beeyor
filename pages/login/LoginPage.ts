@@ -24,16 +24,4 @@ export default class LoginPage extends BasePage {
 
     return new MyAccountPage(this.page);
   }
-
-  // async login(username: string, password: string): Promise<MyAccountPage> {
-  //   await this.fill("#username", username);
-  //   await this.fill("#password", password);
-  //   await this.click("//button[@name='login']");
-  //   await this.page.waitForSelector(
-  //     "//nav[@aria-label='Account pages']//li/a[normalize-space(text())='Log out']",
-  //     { state: "visible" }
-  //   );
-
-  //   return new MyAccountPage(this.page);
-  // }
 }
