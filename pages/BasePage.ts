@@ -16,6 +16,10 @@ export default class BasePage {
     this.page = page;
   }
 
+  async waitUntilPageIsLoaded() {
+    await this.page.waitForEvent("domcontentloaded");
+  }
+
   async navigate(url: string) {
     await this.page.goto(url);
   }
