@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { goToShopPage } from "actions/navigation";
 import { test } from "fixtures/auth";
 
-test.describe("Add Product to a Cart", () => {
+test.describe("Add Product to a Cart", { tag: ["@smoke"] }, () => {
   test("Add a product to cart in 'shop page' and verify it on 'cart page'", async ({
     page,
   }) => {

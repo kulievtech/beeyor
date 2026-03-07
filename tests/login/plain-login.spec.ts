@@ -31,5 +31,5 @@ test(
 
     // 9. Verify Login was successful and Log out text is visible
     expect(logOutText).toBe("Log out");
-  }
+  },
 );
