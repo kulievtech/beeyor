@@ -5,7 +5,7 @@ import parseNumeric from "utilities/parseNumeric";
 export class ProductsTable extends BaseComponent {
   async getCurrentProducts(): Promise<Product[]> {
     const products = this.element.locator(
-      "//ul[contains(@class, 'products')]/li",
+      "//ul[contains(@class, 'products')]//li",
     );
     await products.first().waitFor({ state: "visible" });
     return (await products.all()).map((product) => new Product(product));
