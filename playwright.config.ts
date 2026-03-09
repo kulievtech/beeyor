@@ -12,7 +12,6 @@ export default defineConfig({
   /* Automatically re-runs failed tests or flaky assertions to improve stability. */
   /* Allows tests to pass on transient network issues or temporary UI glitches */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
   /* Workers are isolated OS processes that run your tests in parallel, each with its own browser instance. 
   /* Allows for faster execution by handling multiple test files or scenarios concurrently without interfering with each other */
   workers: process.env.CI ? 4 : undefined,
@@ -28,7 +27,7 @@ export default defineConfig({
     /* Determines whether the browser runs with or without a visible graphical user interface (GUI). */
     headless: true,
     /* Sets the maximum time (in milliseconds) that Playwright will wait for a specific user action (like click(), fill(), check(), etc.) to complete. */
-    actionTimeout: 20_000,
+    actionTimeout: 5 * 1000,
     /* Enables the recording of a detailed trace file (trace.zip) for your test execution. */
     /* This file can be viewed in the Playwright Trace Viewer GUI tool to help you debug test failures by providing a comprehensive, time-travel view of everything that happened during the test run. */
     trace: "off",
