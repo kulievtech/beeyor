@@ -14,34 +14,20 @@ export class ProductsTable extends BaseComponent {
 
 export class Product extends BaseComponent {
   async getTitle(): Promise<string> {
-    try {
-      return await this.getText("//div[contains(@class, 'title')]");
-    } catch (error) {
-      console.error("Failed to get title:", error);
-      return "";
-    }
+    return await this.getText("//div[contains(@class, 'title')]");
   }
 
   async getPrice(): Promise<number> {
-    try {
-      const numText = await this.getText(
-        "//span[contains(@class, 'Price-amount')]",
-      );
-      return parseNumeric(numText);
-    } catch (error) {
-      console.error("Failed to get price:", error);
-      return 0;
-    }
+    const numText = await this.getText(
+      "//span[contains(@class, 'Price-amount')]",
+    );
+    return parseNumeric(numText);
   }
 
   async addToCart(): Promise<void> {
-    try {
-      await this.hover("//img");
-      await this.waitForElement("//a[contains(@aria-label, 'Add to cart')]");
-      await this.click("//a[contains(@aria-label, 'Add to cart')]");
-    } catch (error) {
-      console.error("Failed to add to cart:", error);
-    }
+    await this.hover("//img");
+    await this.waitForElement("//a[contains(@aria-label, 'Add to cart')]");
+    await this.click("//a[contains(@aria-label, 'Add to cart')]");
   }
 
   async isAddedToCart(): Promise<boolean> {
@@ -54,12 +40,14 @@ export class Product extends BaseComponent {
   }
 
   async clickViewCart(): Promise<CartPage> {
-    try {
-      await this.click("//a[@title='View cart']");
-      return new CartPage(this.page);
-    } catch (error) {
-      console.error("Failed to click View Cart:", error);
-      throw error;
-    }
+    await this.click("//a[@title='View cart']");
+    return new CartPage(this.page);
+  }
+
+  async isProductPurchsable(): Promise<boolean> {
+    await this.hover("//img");
+    return await this.element
+      .locator("//a[contains(@aria-label, 'Add to cart')]")
+      .isVisible();
   }
 }

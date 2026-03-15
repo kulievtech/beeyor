@@ -93,7 +93,7 @@ class CartItem extends BaseComponent {
   }
 
   async removeItem(): Promise<void> {
-    await this.click(".remove-item");
+    await this.click("//button[contains(@class, 'remove')]");
   }
 
   async getTotal(): Promise<number> {

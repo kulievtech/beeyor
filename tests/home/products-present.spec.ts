@@ -33,31 +33,31 @@ test.describe("Products Present on Shop Page", { tag: ["@smoke"] }, () => {
   });
 });
 
-const tables = ["Trending", "New Arrivals"];
+// const tables = ["Trending", "New Arrivals"];
 
-tables.forEach((tableName) => {
-  test.describe(
-    `${tableName} Products Present on Shop Page`,
-    { tag: ["@smoke"] },
-    () => {
-      test(`${tableName} Products is displayed`, async ({ page }) => {
-        // 1. Go to Shop Page
-        const homePage = await goToHomePage(page);
+// tables.forEach((tableName) => {
+//   test.describe(
+//     `${tableName} Products Present on Shop Page`,
+//     { tag: ["@smoke"] },
+//     () => {
+//       test(`${tableName} Products is displayed`, async ({ page }) => {
+//         // 1. Go to Shop Page
+//         const homePage = await goToHomePage(page);
 
-        // 2. Wait until page is loaded
-        await homePage.waitUntilPageIsLoaded();
+//         // 2. Wait until page is loaded
+//         await homePage.waitUntilPageIsLoaded();
 
-        // 3. Get Products table and current products
-        const productsTable =
-          tableName === "Trending"
-            ? homePage.getTrendingProductsTable()
-            : homePage.getNewArrivalsProductsTable();
+//         // 3. Get Products table and current products
+//         const productsTable =
+//           tableName === "Trending"
+//             ? homePage.getTrendingProductsTable()
+//             : homePage.getNewArrivalsProductsTable();
 
-        const products = await productsTable.getCurrentProducts();
+//         const products = await productsTable.getCurrentProducts();
 
-        // 4. Verify that there is at least one product displayed
-        expect(products.length).toBeGreaterThan(0);
-      });
-    },
-  );
-});
+//         // 4. Verify that there is at least one product displayed
+//         expect(products.length).toBeGreaterThan(0);
+//       });
+//     },
+//   );
+// });

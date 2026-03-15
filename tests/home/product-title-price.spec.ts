@@ -26,8 +26,6 @@ test.describe(
       for (const product of products) {
         const title = await product.getTitle();
         const price = await product.getPrice();
-        // If product does not have a price, it returns 0
-        if (price === 0) continue;
 
         expect.soft(title.length).toBeGreaterThan(1);
         expect.soft(typeof title).toBe("string");
@@ -37,16 +35,14 @@ test.describe(
     });
 
     test("New Arrivals Products have valid titles and prices", async () => {
-      // 3. Get New Arrivals Products table and current products
+      // Get New Arrivals Products table and current products
       const productsTable = homePage.getNewArrivalsProductsTable();
       const products = await productsTable.getCurrentProducts();
 
-      // 4. Verify that each product has a valid title and price
+      // Verify that each product has a valid title and price
       for (const product of products) {
         const title = await product.getTitle();
         const price = await product.getPrice();
-        // If product does not have a price, it returns 0
-        if (price === 0) continue;
 
         expect.soft(title.length).toBeGreaterThan(1);
         expect.soft(typeof title).toBe("string");
