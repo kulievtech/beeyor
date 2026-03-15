@@ -36,7 +36,7 @@ export default class BaseComponent {
   }
 
   async getText(selector: string): Promise<string> {
-    const locator = this.page.locator(selector);
+    const locator = this.element.locator(selector);
     const text = (await locator.innerText()).trim();
     return text;
   }
