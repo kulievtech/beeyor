@@ -20,6 +20,7 @@ export default class BaseComponent {
 
   constructor(element: Locator) {
     this.element = element;
+    // In Playwright, locator.page() is a method on a Locator that returns the Page object the locator belongs to.
     this.page = element.page();
   }
 
