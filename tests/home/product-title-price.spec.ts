@@ -10,19 +10,19 @@ test.describe(
     let homePage: HomePage;
 
     test.beforeEach(async ({ page }) => {
-      // 1. Go to Shop Page
+      // Go to Shop Page
       homePage = await goToHomePage(page);
 
-      // 2. Wait until page is loaded
+      // Wait until page is loaded
       await homePage.waitUntilPageIsLoaded();
     });
 
     test("Trending Products have valid titles and prices", async () => {
-      // 3. Get Trending Products table and current products
+      // Get Trending Products table and current products
       const productsTable = homePage.getTrendingProductsTable();
       const products = await productsTable.getCurrentProducts();
 
-      // 4. Verify that each product has a valid title and price
+      // Verify that each product has a valid title and price
       for (const product of products) {
         const title = await product.getTitle();
         const price = await product.getPrice();
@@ -67,13 +67,13 @@ tables.forEach((tableName) => {
       test(`${tableName} products have valid titles and prices`, async ({
         page,
       }) => {
-        // 1. Go to Shop Page
+        // Go to Shop Page
         const homePage = await goToHomePage(page);
 
-        // 2. Wait until page is loaded
+        // Wait until page is loaded
         await homePage.waitUntilPageIsLoaded();
 
-        // 3. Get Products table and current products
+        // Get Products table and current products
         const productsTable =
           tableName === "Trending Products"
             ? homePage.getTrendingProductsTable()
@@ -81,7 +81,7 @@ tables.forEach((tableName) => {
 
         const products = await productsTable.getCurrentProducts();
 
-        // 4. Verify that each product has a valid title and price
+        // Verify that each product has a valid title and price
         for (const product of products) {
           const title = await product.getTitle();
           const price = await product.getPrice();

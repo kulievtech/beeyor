@@ -10,5 +10,5 @@ test(
     const logOutText = await myAccountPage.getLogOutText();
     console.log(`Logged in user is: ${user.username}`);
     expect(logOutText).toBe("Log out");
-  }
+  },
 );
