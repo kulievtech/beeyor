@@ -4,7 +4,7 @@ import { ProductsTable } from "./ProductsTable";
 
 /**
  * Dashboard Page page object
- * URL: /dashboard
+ * URL: /
  */
 
 export default class HomePage extends BasePage {

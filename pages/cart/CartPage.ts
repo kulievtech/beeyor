@@ -16,7 +16,6 @@ export default class CartPage extends BasePage {
     const tableLocator = this.page.locator(
       "//table[contains(@class, 'cart-items')]",
     );
-
     return new CartItemsTable(tableLocator);
   }
 
@@ -38,7 +37,6 @@ export default class CartPage extends BasePage {
     const frame = this.page.frameLocator(
       "//li[contains(@id, 'applePay')]//iframe",
     );
-
     await frame.locator("#apple-pay-button").click();
   }
 
@@ -56,8 +54,8 @@ class CartItemsTable extends BaseComponent {
   async getCartItems(): Promise<CartItem[]> {
     const items = this.element.locator("//tr[contains(@class, 'row')]");
     await items.first().waitFor({ state: "visible" });
-
-    return (await items.all()).map((item) => new CartItem(item));
+    const allItems = await items.all();
+    return allItems.map((item) => new CartItem(item));
   }
 }
 

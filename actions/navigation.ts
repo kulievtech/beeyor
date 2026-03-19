@@ -1,5 +1,4 @@
 import CartPage from "@pages/cart/CartPage";
-import CheckoutPage from "@pages/checkout/CheckoutPage";
 import LoginPage from "@pages/login/LoginPage";
 import MyAccountPage from "@pages/my-account/MyAccountPage";
 import HomePage from "@pages/home/HomePage";
@@ -12,42 +11,29 @@ const goToStartPage = async (page: Page): Promise<void> => {
 
 const goToCartPage = async (page: Page): Promise<CartPage> => {
   await page.click("//div[@id='modal-2-content']//span[contains(., 'Cart')]");
-
   return new CartPage(page);
-};
-
-const goToCheckoutPage = async (page: Page): Promise<CheckoutPage> => {
-  await page.click(
-    "//div[@id='modal-2-content']//span[contains(., 'Checkout')]",
-  );
-
-  return new CheckoutPage(page);
 };
 
 const goToMyAccountPage = async (page: Page): Promise<MyAccountPage> => {
   await page.click(
     "//div[@id='modal-2-content']//span[contains(., 'My Account')]",
   );
-
   return new MyAccountPage(page);
 };
 
 const goToHomePage = async (page: Page): Promise<HomePage> => {
   await page.click("//div[@id='modal-2-content']//span[contains(., 'Shop')]");
-
   return new HomePage(page);
 };
 
 const goToLoginPage = async (page: Page): Promise<LoginPage> => {
   await page.click("//a[contains(., 'Login')]");
-
   return new LoginPage(page);
 };
 
 export {
   goToStartPage,
   goToCartPage,
-  goToCheckoutPage,
   goToMyAccountPage,
   goToHomePage,
   goToLoginPage,

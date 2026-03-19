@@ -8,7 +8,8 @@ export class ProductsTable extends BaseComponent {
       "//ul[contains(@class, 'products')]//li[contains(@class, 'product')]",
     );
     await products.first().waitFor({ state: "visible" });
-    return (await products.all()).map((product) => new Product(product));
+    const allProducts = await products.all();
+    return allProducts.map((product) => new Product(product));
   }
 }
 
@@ -46,8 +47,6 @@ export class Product extends BaseComponent {
 
   async isProductPurchsable(): Promise<boolean> {
     await this.hover("//img");
-    return await this.element
-      .locator("//a[contains(@aria-label, 'Add to cart')]")
-      .isVisible();
+    return await this.isVisible("//a[contains(@aria-label, 'Add to cart')]");
   }
 }
