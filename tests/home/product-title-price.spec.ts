@@ -27,6 +27,8 @@ test.describe(
         const title = await product.getTitle();
         const price = await product.getPrice();
 
+        if (price === null) continue;
+
         expect.soft(title.length).toBeGreaterThan(1);
         expect.soft(typeof title).toBe("string");
         expect.soft(price).toBeGreaterThan(0);

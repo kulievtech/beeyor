@@ -4,7 +4,7 @@ import { goToCartPage, goToHomePage } from "actions/navigation";
 import { test } from "fixtures/auth";
 
 test.describe("Add Product to a Cart", { tag: ["@smoke"] }, () => {
-  test("Add a product to cart in 'shop page' and verify it on 'cart page'", async ({
+  test("Add a product to cart in 'shop page' and verify it is on 'cart page'", async ({
     page,
   }) => {
     // Navigate to the shop page
@@ -38,7 +38,7 @@ test.describe("Add Product to a Cart", { tag: ["@smoke"] }, () => {
     await cartPage.waitUntilPageIsLoaded();
     const cartItemsTable = cartPage.getCartItemsTable();
     const cartItems = await cartItemsTable.getCartItems();
-    test.expect(cartItems.length).toBeGreaterThan(0);
+    expect(cartItems.length).toBeGreaterThan(0);
   });
 
   test.afterEach(async ({ page }) => {

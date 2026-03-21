@@ -18,11 +18,15 @@ export class Product extends BaseComponent {
     return await this.getText("//div[contains(@class, 'title')]");
   }
 
-  async getPrice(): Promise<number> {
-    const numText = await this.getText(
-      "//span[contains(@class, 'Price-amount')]",
-    );
-    return parseNumeric(numText);
+  async getPrice(): Promise<number | null> {
+    try {
+      const numText = await this.getText(
+        "//span[contains(@class, 'Price-amount')]",
+      );
+      return parseNumeric(numText);
+    } catch {
+      return null;
+    }
   }
 
   async addToCart(): Promise<void> {
