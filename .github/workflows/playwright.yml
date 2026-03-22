@@ -1,6 +1,7 @@
 name: Playwright Tests
 
 on:
+  # Manual trigger with inputs
   workflow_dispatch:
     inputs:
       environment:
@@ -8,23 +9,19 @@ on:
         required: true
         default: "staging"
         type: choice
-        options:
-          - UAT
-          - Staging
+        options: ["UAT", "Staging"]
       test_type:
         description: "Choose Test Suite to Run"
         required: true
         default: "All"
         type: choice
-        options:
-          - Smoke
-          - Regression
-          - All
+        options: ["Smoke", "Regression", "All"]
       test_name_filter:
         description: "Optional: Filter tests by name (regex supported)"
         required: false
         default: ""
         type: string
+  # Scheduled — runs automatically
   schedule:
     - cron: "0 5 * * 1-5" # 12:00 AM (midnight) EST
     - cron: "0 17 * * 1-5" # 12:00 PM (noon) EST
