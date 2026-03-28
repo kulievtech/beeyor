@@ -7,7 +7,7 @@ on:
       environment:
         description: "Choose Environment to Run Tests Against"
         required: true
-        default: "staging"
+        default: "Staging"
         type: choice
         options: ["UAT", "Staging"]
       test_type:
@@ -36,14 +36,16 @@ jobs:
         shardTotal: [4]
       fail-fast: false
     env:
-      TEST_SUITE: ${{ github.event.inputs.test_type }}
-      TEST_NAME_FILTER: ${{ github.event.inputs.test_name_filter }}
+      TEST_SUITE: ${{ github.event.inputs.test_type || 'All' }}
+      TEST_NAME_FILTER: ${{ github.event.inputs.test_name_filter || '' }}
+      ENVIRONMENT: ${{ github.event.inputs.environment || 'Staging' }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          # ✅ Fix #7: pin to a stable LTS version instead of lts/*
+          node-version: "20"
 
       - name: Install dependencies
         run: npm ci
@@ -52,32 +54,47 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests
+        env:
+          BASE_URL: ${{ env.ENVIRONMENT == 'UAT' && 'https://uat.example.com' || 'https://staging.example.com' }}
         run: |
-          echo "Running $TEST_SUITE tests"
-          echo "Test name filter: $TEST_NAME_FILTER"
-
-          # Build grep argument dynamically
-          GREP_ARG=""
-          if [ -n "$TEST_NAME_FILTER" ]; then
-            GREP_ARG="--grep $TEST_NAME_FILTER"
-          fi
+          echo "Environment : $ENVIRONMENT (BASE_URL=$BASE_URL)"
+          echo "Test suite  : $TEST_SUITE"
+          echo "Name filter : $TEST_NAME_FILTER"
 
           if [ "$TEST_SUITE" = "Smoke" ]; then
-            echo "Running Smoke suite..."
-            npx playwright test --grep "@smoke" $GREP_ARG --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
+            TAG="@smoke"
           elif [ "$TEST_SUITE" = "Regression" ]; then
-            echo "Running Regression suite..."
-            npx playwright test --grep "@regression" $GREP_ARG --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
+            TAG="@regression"
           else
-            echo "Running All tests..."
-            npx playwright test $GREP_ARG --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=html,blob
+            TAG=""
+          fi
+
+          if [ -n "$TAG" ] && [ -n "$TEST_NAME_FILTER" ]; then
+            # AND both conditions via a lookahead-style combined regex
+            GREP_PATTERN="(?=.*${TAG})(?=.*${TEST_NAME_FILTER})"
+          elif [ -n "$TAG" ]; then
+            GREP_PATTERN="$TAG"
+          elif [ -n "$TEST_NAME_FILTER" ]; then
+            GREP_PATTERN="$TEST_NAME_FILTER"
+          else
+            GREP_PATTERN=""
+          fi
+
+          if [ -n "$GREP_PATTERN" ]; then
+            npx playwright test --grep "$GREP_PATTERN" \
+              --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
+              --reporter=html,blob
+          else
+            npx playwright test \
+              --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
+              --reporter=html,blob
           fi
 
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: blob-report-${{ env.TEST_SUITE }}-${{ matrix.shardIndex }}
+          name: blob-report-${{ env.TEST_SUITE }}-shard-${{ matrix.shardIndex }}-attempt-${{ github.run_attempt }}
           path: blob-report
           retention-days: 14
 
@@ -86,19 +103,19 @@ jobs:
     needs: [playwright-tests]
     runs-on: ubuntu-latest
     env:
-      TEST_SUITE: ${{ github.event.inputs.test_type }}
+      TEST_SUITE: ${{ github.event.inputs.test_type || 'All' }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: "20"
 
       - name: Install dependencies
         run: npm ci
 
       - name: Download blob reports from GitHub Actions Artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v4
         with:
           path: all-blob-reports
           pattern: blob-report-*
