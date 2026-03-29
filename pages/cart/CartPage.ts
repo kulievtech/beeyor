@@ -1,5 +1,6 @@
 import BaseComponent from "@pages/BaseComponent";
 import BasePage from "@pages/BasePage";
+import CheckoutPage from "@pages/checkout/CheckoutPage";
 import parseNumeric from "utilities/parseNumeric";
 
 /**
@@ -45,8 +46,9 @@ export default class CartPage extends BasePage {
     await frame.locator("#primary").click();
   }
 
-  async clickCheckout(): Promise<void> {
+  async clickCheckout(): Promise<CheckoutPage> {
     await this.click("//div[contains(@class, 'cart__submit')]//a");
+    return new CheckoutPage(this.page);
   }
 }
 
