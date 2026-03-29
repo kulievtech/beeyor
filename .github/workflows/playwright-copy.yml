@@ -1,6 +1,7 @@
 name: Playwright Tests
 
 on:
+  # Manual trigger with inputs
   workflow_dispatch:
     inputs:
       environment:
@@ -20,14 +21,20 @@ on:
         required: false
         default: ""
         type: string
+  # Scheduled — runs automatically
   schedule:
-    - cron: "0 5 * * 1-5"
-    - cron: "0 17 * * 1-5"
+    - cron: "0 5 * * 1-5" # 12:00 AM (midnight) EST
+    - cron: "0 17 * * 1-5" # 12:00 PM (noon) EST
 
 jobs:
   playwright-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
+      fail-fast: false
     env:
       TEST_SUITE: ${{ github.event.inputs.test_type || 'All' }}
       TEST_NAME_FILTER: ${{ github.event.inputs.test_name_filter || '' }}
@@ -62,6 +69,7 @@ jobs:
           fi
 
           if [ -n "$TAG" ] && [ -n "$TEST_NAME_FILTER" ]; then
+            # AND both conditions via a lookahead-style combined regex
             GREP_PATTERN="(?=.*${TAG})(?=.*${TEST_NAME_FILTER})"
           elif [ -n "$TAG" ]; then
             GREP_PATTERN="$TAG"
@@ -72,13 +80,50 @@ jobs:
           fi
 
           if [ -n "$GREP_PATTERN" ]; then
-            npx playwright test --grep "$GREP_PATTERN" --reporter=html
+            npx playwright test --grep "$GREP_PATTERN" \
+              --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
+              --reporter=html,blob
           else
-            npx playwright test --reporter=html
+            npx playwright test \
+              --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
+              --reporter=html,blob
           fi
 
-      - name: Upload HTML report
+      - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-${{ env.TEST_SUITE }}-shard-${{ matrix.shardIndex }}-attempt-${{ github.run_attempt }}
+          path: blob-report
+          retention-days: 14
+
+  merge-reports:
+    if: ${{ !cancelled() }}
+    needs: [playwright-tests]
+    runs-on: ubuntu-latest
+    env:
+      TEST_SUITE: ${{ github.event.inputs.test_type || 'All' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html all-blob-reports
+
+      - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
           name: html-report-${{ env.TEST_SUITE }}-attempt-${{ github.run_attempt }}
