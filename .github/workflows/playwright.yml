@@ -44,7 +44,6 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          # ✅ Fix #7: pin to a stable LTS version instead of lts/*
           node-version: "20"
 
       - name: Install dependencies
