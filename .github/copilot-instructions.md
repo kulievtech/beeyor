@@ -1,279 +1,229 @@
-# POM (Page Object Model) Architecture Guide
+# Page Object Model (POM) Implementation Guide
 
 ## Overview
 
-This project uses a hierarchical Page Object Model pattern with Playwright, organized into base classes, page objects, and component objects.
+This project uses Playwright with the Page Object Model pattern to organize UI interactions and test logic. Follow these guidelines consistently when creating or modifying page objects, components, and tests.
+
+---
 
 ## Base Classes
 
 ### BasePage
 
-**Location:** pages/BasePage.ts
+- **Purpose**: Encapsulates common Playwright page actions
+- **Inheritance**: Used for full page objects (e.g., `HomePage`, `LoginPage`, `CartPage`)
+- **Constructor**: Takes a `Page` object
+- **Location**: `pages/BasePage.ts`
 
-- **Purpose:** Encapsulates common Playwright page-level actions
-- **Inherits from:** None (but wraps Playwright's `Page` object)
-- **Key Methods:**
-  - `waitUntilPageIsLoaded()`: Abstract pattern - overridden in each page
-  - `navigate(url)`: Navigate to URL
-  - `click(selector)`: Click element
-  - `fill(selector, value)`: Fill form input
-  - `getText(selector)`: Get element text (returns trimmed string)
-  - `isVisible(selector)`: Check visibility
-  - `waitForElement(selector)`: Wait for element visibility
-- **Usage:** All page objects extend BasePage
-- **Selector Type:** XPath (e.g., `//button[contains(@aria-label, 'items in cart')]`)
+**Common Methods**:
+
+- `waitUntilPageIsLoaded()` - Wait for page-specific elements
+- `navigate(url)` - Navigate to a URL
+- `click(selector)` - Click an element
+- `fill(selector, value)` - Fill a form field
+- `getText(selector)` - Get trimmed inner text
+- `isVisible(selector)` - Check if element is visible
+- `waitForElement(selector)` - Wait for element visibility
 
 ### BaseComponent
 
-**Location:** pages/BaseComponent.ts
+- **Purpose**: Encapsulates interactions on a scoped `Locator`
+- **Inheritance**: Used for components and sub-elements (e.g., `ProductsTable`, `Product`, `CartComponent`)
+- **Constructor**: Takes a `Locator` object; automatically extracts `page` via `locator.page()`
+- **Location**: `pages/BaseComponent.ts`
 
-- **Purpose:** Encapsulates common interactions for scoped Locator elements
-- **Inherits from:** None (but wraps Playwright's `Locator` object)
-- **Key Methods:** Same as BasePage (click, fill, getText, isVisible, waitForElement, hover)
-- **Additional Methods:**
-  - `hover(selector)`: Hover over element
-- **Constructor:** Takes a Locator - `constructor(element: Locator)`
-- **Key Properties:**
-  - `this.element` - root locator scoped for all interactions
-  - `this.page` - extracted via `element.page()`
-- **Usage:** Component classes extend BaseComponent when scoped to specific DOM subtree
-- **Scoping:** All method queries use `this.element.locator(selector)` not `this.page.locator(selector)`
+**Common Methods** (inherits from BasePage pattern):
 
-## Page Objects (Extend BasePage)
+- `click(selector)` - Click within the scoped element
+- `fill(selector, value)` - Fill a form field within the scoped element
+- `getText(selector)` - Get trimmed inner text within the scoped element
+- `hover(selector)` - Hover over an element within the scoped element
+- `isVisible(selector)` - Check visibility within the scoped element
+- `waitForElement(selector, timeout?)` - Wait for element within the scoped element (default 10s timeout)
 
-### Structure
+---
 
-```typescript
-export default class [PageName] extends BasePage {
-  async waitUntilPageIsLoaded() {
-    // Wait for a unique page-specific element
-    await this.waitForElement("//h2[contains(., 'Page Title')]");
-  }
+## Page Object Architecture
 
-  async pageAction(): Promise<ReturnType> {
-    // Direct page interactions
-  }
+### Page Objects (Extend BasePage)
 
-  getComponentName(): ComponentClass {
-    // Return component objects instantiated with scoped locators
-    return new ComponentClass(
-      this.page.locator("//div[contains(@class, 'component')]")
-    );
-  }
-}
-```
+1. **Location**: `pages/{page-name}/{PageName}.ts`
 
-### Examples
+2. **Structure**:
 
-- **HomePage** - extends BasePage
-  - `waitUntilPageIsLoaded()` - waits for "Trending Products" heading
-  - `getTrendingProductsTable()` - returns ProductsTable component
-  - `getNewArrivalsProductsTable()` - returns ProductsTable component
-  - `openCart()` - returns CartComponent
+   ```typescript
+   import BasePage from "@pages/BasePage";
 
-- **CartPage** - extends BasePage
-  - `waitUntilPageIsLoaded()` - waits for Cart heading
-  - `getCartItemsTable()` - returns CartItemsTable component
-  - `getSubtotal()` - returns numeric price
-  - `getTotal()` - returns numeric price
+   /**
+    * {Description} Page
+    * URL: /{path}
+    */
+   export default class {PageName}Page extends BasePage {
+     async waitUntilPageIsLoaded() {
+       // Wait for distinctive page elements
+       await this.waitForElement("//selector");
+     }
 
-- **LoginPage** - extends BasePage
-  - Page-specific inputs: `inputUsername()`, `inputPassword()`
-  - `clickLoginButton()` - returns MyAccountPage
+     async someAction(): Promise<ReturnType> {
+       // Implement action
+     }
+   }
+   ```
 
-## Component Objects (Extend BaseComponent)
+3. **Requirements**:
+   - Always implement `waitUntilPageIsLoaded()` for page-specific wait logic
+   - Use XPath selectors as the primary selector strategy
+   - Return other page objects or components when actions lead to navigation
+   - Include JSDoc comment with page title and URL
+   - Page selectors scoped to the full page via `this.page.locator(selector)`
 
-### Structure
+### Component Objects (Extend BaseComponent)
 
-```typescript
-export class [ComponentName] extends BaseComponent {
-  constructor(element: Locator) {
-    super(element);
-  }
+1. **Location**: `pages/{component-name}/` or inline in page folder (e.g., `pages/home/ProductsTable.ts`)
 
-  async someMethod(): Promise<ReturnType> {
-    // Uses this.element.locator() for scoped queries
-  }
+2. **Structure**:
 
-  async getCollectionItems(): Promise<ItemClass[]> {
-    // Common pattern: return arrays of domain objects
-    const items = this.element.locator("//li");
-    const allItems = await items.all();
-    return allItems.map((item) => new ItemClass(item));
-  }
-}
-```
+   ```typescript
+   import BaseComponent from "@pages/BaseComponent";
 
-### Key Characteristics
+   /**
+    * {ComponentName}
+    *
+    * Brief description of component purpose
+    */
+   export class {ComponentName} extends BaseComponent {
+     async someMethod(): Promise<ReturnType> {
+       // Selectors scoped to this.element
+       await this.click("//selector");
+     }
+   }
+   ```
 
-- **Scoped Locators:** All selectors are relative to `this.element`
-- **Returned as Objects:** Components expose collections as arrays (e.g., `getCurrentProducts()` returns Product[])
-- **Nested Interactions:** Components can return other components or pages
-- **Extraction Pattern:** First wait for element, then get all, then map to objects
+3. **Requirements**:
+   - Use `this.element.locator(selector)` internally (methods handle this automatically)
+   - All selectors are relative to the scoped element
+   - Can return other components or page objects
+   - Use XPath as primary selector strategy
+   - Include JSDoc with brief component description
 
-### Examples
+### Nested/Extracted Components
 
-- **ProductsTable** extends BaseComponent
-  - `getCurrentProducts()` - returns Product[]
-- **Product** extends BaseComponent
-  - `getTitle()`, `getPrice()` - get product data
-  - `addToCart()` - action method
-  - `isAddedToCart()` - boolean assertion helper
-  - `clickViewCart()` - returns CartPage
-  - `isProductPurchsable()` - visibility check
+- Extract complex components (e.g., `Product` from `ProductsTable`) as separate classes
+- Maintain hierarchy: components can be children of other components
+- Example: `Product extends BaseComponent` with methods like `getTitle()`, `getPrice()`, `addToCart()`
 
-- **CartItemsTable** extends BaseComponent
-  - `getCartItems()` - returns CartItem[]
+---
 
-- **CartItem** extends BaseComponent
-  - `getTitle()`, `getPrice()`, `getQuantity()`, `getTotal()` - getters
-  - `increaseQuantity()`, `decreaseQuantity()`, `removeItem()` - actions
+## Selector Strategy
 
-## Fixtures
+1. **Primary Strategy**: XPath selectors (more robust for dynamic content)
+2. **Format**: Use `//` for XPath (e.g., `"//button[contains(@aria-label, 'Add to cart')]"`)
+3. **Attribute Matching**: Prefer `contains()` for partial matches and `normalize-space()` for whitespace
+4. **Avoid**: Brittle CSS classes, index-based selectors, or long selector chains
 
-**Location:** fixtures/auth.ts
+---
 
-```typescript
-type AuthFixtures = {
-  page: Page;
-  user: { username: string; password: string };
-};
+## Navigation Patterns
 
-export const test = base.extend<AuthFixtures>({
-  page: async ({ page }, use) => {
-    await login(page); // Pre-login before each test
-    await use(page);
-  },
-  user: async ({}, use) => {
-    const userData = { username: "students", password: "Default1!" };
-    await use(userData);
-  },
-});
-```
+### Navigation Actions
 
-- **Custom `test` fixture:** Provides logged-in `page` and `user` data
-- **Import in tests:** `import { test } from "fixtures/auth";`
-- **Use instead of:** `import { test } from "@playwright/test";`
-- **Pre-login behavior:** Every test automatically logs in before running
-- **User fixture:** Provides test credentials as `{ username, password }` object
+- **Location**: `actions/navigation.ts`
+- **Pattern**: Functions that take a `Page` and return a page object
+- **Example**:
+  ```typescript
+  const goToHomePage = async (page: Page): Promise<HomePage> => {
+    await page.click("//selector");
+    return new HomePage(page);
+  };
+  ```
 
-## Navigation Actions
+### Returning Page Objects from Actions
 
-**Location:** actions/navigation.ts
+- When an action triggers navigation, return the new page object
+- Example: `Product.clickViewCart()` returns `CartPage`
+- Example: `HomePage.openCart()` returns `CartComponent`
 
-Exports helper functions that navigate and return page objects:
+---
 
-```typescript
-const goToHomePage = async (page: Page): Promise<HomePage> => {
-  await page.click("//div[@id='modal-2-content']//span[contains(., 'Shop')]");
-  return new HomePage(page);
-};
-```
+## Test File Guidelines
 
-**Available Functions:**
+1. **Location**: `tests/{feature}/{test-name}.spec.ts`
+2. **Fixture Usage**: Import custom fixtures from `fixtures/auth` for logged-in page context
+3. **Actions**: Use navigation actions from `actions/navigation.ts`
+4. **Structure**:
 
-- `goToHomePage(page)` → HomePage
-- `goToCartPage(page)` → CartPage
-- `goToLoginPage(page)` → LoginPage
-- `goToMyAccountPage(page)` → MyAccountPage
-- `goToStartPage(page)` → void (just navigates)
+   ```typescript
+   import { test } from "fixtures/auth";
+   import { goToHomePage } from "actions/navigation";
+   import { expect } from "@playwright/test";
 
-## Test Pattern
+   test("Test description", { tag: ["@regression"] }, async ({ page }) => {
+     // Navigate using action
+     const homePage = await goToHomePage(page);
+     await homePage.waitUntilPageIsLoaded();
 
-```typescript
-import HomePage from "@pages/home/HomePage";
-import { expect } from "@playwright/test";
-import { goToHomePage } from "actions/navigation";
-import { test } from "fixtures/auth";
+     // Interact with page objects/components
+     const component = homePage.getComponent();
+     const result = await component.someMethod();
 
-test.describe("Feature", { tag: ["@smoke"] }, () => {
-  test("should do something", async ({ page }) => {
-    // 1. Navigate to page (returns page object)
-    const homePage = await goToHomePage(page);
+     // Assert
+     expect(result).toBeTruthy();
+   });
+   ```
 
-    // 2. Wait for page to load
-    await homePage.waitUntilPageIsLoaded();
+5. **Best Practices**:
+   - Always call `waitUntilPageIsLoaded()` after navigating
+   - Use page/component methods instead of direct Playwright calls in tests
+   - Maintain test isolation (cleanup after each test via `test.afterEach()`)
+   - Keep tests focused on user workflows
 
-    // 3. Get component from page
-    const productsTable = homePage.getTrendingProductsTable();
+---
 
-    // 4. Get data from component
-    const products = await productsTable.getCurrentProducts();
+## Fixtures and Utilities
 
-    // 5. Interact with nested components
-    const product = products[0];
-    await product.addToCart();
+### Custom Fixtures
 
-    // 6. Get related page or component
-    const cartPage = await product.clickViewCart();
-    await cartPage.waitUntilPageIsLoaded();
+- **Location**: `fixtures/auth.ts`
+- **Purpose**: Provide pre-configured context (e.g., logged-in page)
+- **Usage**: Import custom test as `import { test } from "fixtures/auth"`
 
-    // 7. Assert
-    expect(await cartPage.getTotal()).toBeGreaterThan(0);
-  });
+### Helper Functions
 
-  test.afterEach(async ({ page }) => {
-    // Cleanup in afterEach hooks
-    const cartPage = await goToCartPage(page);
-    await cartPage.waitUntilPageIsLoaded();
-    const items = await cartPage.getCartItemsTable().getCartItems();
-    for (const item of items) {
-      await item.removeItem();
-    }
-  });
-});
-```
+- **Location**: `utilities/`
+- **Purpose**: Reusable non-POM functions (e.g., `login()`, `parseNumeric()`)
+- **Usage**: Import and call in page object methods as needed
 
-## Key Principles
+---
 
-1. **Hierarchical Structure:** BasePage → Page Objects; BaseComponent → Component Objects
-2. **Wait for Load:** Always call `waitUntilPageIsLoaded()` immediately after navigation
-3. **Component Getters:** Pages expose components via getter methods (NOT async)
-4. **Component Collections:** Components return arrays of domain objects (Product[], CartItem[])
-5. **XPath Selectors:** All selectors use XPath notation (`//`, `[@attr]`, `[contains()]`)
-6. **Scoped Locators:** BaseComponent uses `this.element.locator()` to scope queries
-7. **Return Types:**
-   - Methods that navigate → return page objects (CartPage, LoginPage)
-   - Methods that click elements → return components or pages
-   - Getter methods → return primitives or object arrays
-8. **Fixtures Over Direct:** Tests use `test` from fixtures/auth for logged-in sessions
-9. **Extraction Pattern:** For collections, wait for first item, get all, then map to objects
-10. **Error Handling:** Use try/catch for optional operations (e.g., parseNumeric might return null)
+## Key Implementation Principles
 
-## Adding New Page Objects
+1. **Encapsulation**: Hide Playwright details behind page object methods
+2. **Reusability**: Common operations in base classes, specific implementations in page/component objects
+3. **Navigation Returns**: Methods that navigate should return the resulting page object
+4. **Scoped Selectors**: Use `this.element` for components, `this.page` for pages
+5. **Wait Strategies**: Always wait for page load before asserting; use `waitUntilPageIsLoaded()`
+6. **No Direct Playwright in Tests**: Tests should only interact via page object methods
+7. **Readable Assertions**: Use page object methods to get data, then assert in tests
 
-1. Create file in `pages/[feature]/[PageName].ts`
-2. Import BasePage from `@pages/BasePage`
-3. Extend BasePage and implement `async waitUntilPageIsLoaded()`
-4. Add page-specific methods (actions return void or other pages; getters return primitives or components)
-5. Use getter methods to expose component objects
-6. Import and use in tests via navigation actions
+---
 
-## Adding New Component Objects
-
-1. Define class extending BaseComponent in appropriate file or create new file
-2. Constructor takes `element: Locator` → call `super(element)`
-3. Implement component-specific methods using `this.element.locator()` for all queries
-4. For collection methods:
-   - Find all items: `const items = this.element.locator("//selector")`
-   - Wait for visibility: `await items.first().waitFor({ state: "visible" })`
-   - Get all: `const allItems = await items.all()`
-   - Map to objects: `return allItems.map((item) => new ItemClass(item))`
-5. Export component class so it can be used in pages or tests
-
-## URL Model (models/Arguments.ts)
-
-All tests reference `BASE_URL` from the arguments model:
+## Example: Complete Flow
 
 ```typescript
-import { BASE_URL } from "models/Arguments";
+// Test
+const homePage = await goToHomePage(page);
+await homePage.waitUntilPageIsLoaded();
+const productsTable = homePage.getTrendingProductsTable();
+const products = await productsTable.getCurrentProducts();
+const product = products[0];
+await product.addToCart();
+
+// Page Structure:
+// HomePage extends BasePage
+//   ├─ getTrendingProductsTable() returns ProductsTable
+//   └─ ProductsTable extends BaseComponent
+//      ├─ getCurrentProducts() returns Product[]
+//      └─ Product extends BaseComponent
+//         ├─ getTitle(), getPrice(), addToCart()
+//         └─ clickViewCart() returns CartPage
 ```
-
-Navigation actions use this constant to ensure consistent URL handling across tests.
-
-## Utility Functions
-
-- **parseNumeric(text: string)** - Extracts numeric value from price strings
-- **login(page: Page)** - Logs in the test user (called automatically by auth fixture)
-
-Use these for consistent data transformation across components.

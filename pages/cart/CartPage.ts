@@ -52,7 +52,7 @@ export default class CartPage extends BasePage {
   }
 }
 
-class CartItemsTable extends BaseComponent {
+export class CartItemsTable extends BaseComponent {
   async getCartItems(): Promise<CartItem[]> {
     const items = this.element.locator("//tr[contains(@class, 'row')]");
     await items.first().waitFor({ state: "visible" });
@@ -61,35 +61,72 @@ class CartItemsTable extends BaseComponent {
   }
 }
 
-class CartItem extends BaseComponent {
+export class CartItem extends BaseComponent {
   async goToProductPage(): Promise<void> {
-    await this.click(".product-name a");
+    // Find the product name link (has the wc-block-components-product-name class)
+    await this.click("//a[contains(@class, 'product-name')]");
   }
 
   async getTitle(): Promise<string> {
-    return await this.getText(".product-name a");
+    // Get the product name from the link with product-name class
+    return await this.getText("//a[contains(@class, 'product-name')]");
   }
 
   async getPrice(): Promise<number> {
-    const priceText = await this.getText(".product-price .amount");
+    // Get price from the generic element containing the price
+    const priceText = await this.getText(
+      "//div[contains(., '$')][not(contains(., 'Subtotal'))][not(contains(., 'Total'))][1]",
+    );
     return parseNumeric(priceText);
   }
 
   async getDescription(): Promise<string> {
-    return await this.getText(".product-name .description");
+    return await this.getText("//p");
   }
 
   async getQuantity(): Promise<number> {
-    const qtyText = await this.getText(".product-quantity input");
-    return parseInt(qtyText, 10);
+    const input = this.element.locator("input[type='number']");
+    const value = await input.inputValue();
+    return parseInt(value, 10);
   }
 
   async increaseQuantity(): Promise<void> {
-    await this.click(".quantity-increase");
+    // Find the increase button after/near the input field
+    // Try XPath to find button containing + or with specific aria-label
+    const increaseBtn = this.element.locator("xpath=//button[contains(., '+') or contains(@aria-label, 'Increase') or contains(., ' +')]").first();
+    
+    if (await increaseBtn.isVisible().catch(() => false)) {
+      await increaseBtn.click();
+    } else {
+      // Fallback: try to find by position (last button in the row)
+      const buttons = this.element.locator("button");
+      const count = await buttons.count();
+      if (count > 0) {
+        await buttons.nth(count - 1).click();
+      }
+    }
+    
+    // Wait for the page to process the click and update the DOM
+    await this.page.waitForTimeout(1000);
   }
 
   async decreaseQuantity(): Promise<void> {
-    await this.click(".quantity-decrease");
+    // Find the decrease button before/near the input field  
+    // Try XPath to find button containing − or - with specific aria-label
+    const decreaseBtn = this.element.locator("xpath=//button[contains(., '−') or contains(., '-') or contains(@aria-label, 'Decrease')]").first();
+    
+    if (await decreaseBtn.isVisible().catch(() => false)) {
+      await decreaseBtn.click();
+    } else {
+      // Fallback: try to find by position (first button in the row)
+      const buttons = this.element.locator("button");
+      if (await buttons.count() > 0) {
+        await buttons.first().click();
+      }
+    }
+    
+    // Wait for the page to process the click and update the DOM
+    await this.page.waitForTimeout(1000);
   }
 
   async removeItem(): Promise<void> {
